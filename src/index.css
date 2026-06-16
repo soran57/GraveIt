@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+/*
+   GraveIt — Pixel Art Design System
+   Dark mono palette, Press Start 2P font
+*/
+
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: #0e0e0e;
+  --bg-input: #0d0d0d;
+
+  --border-primary: #2a2a2a;
+  --border-secondary: #1e1e1e;
+  --border-hover: #3a3a3a;
+  --border-focus: #555;
+
+  --text-primary: #d4d4d4;
+  --text-secondary: #999;
+  --text-muted: #666;
+  --text-dim: #444;
+  --text-bright: #eee;
+
+  --accent: #fff;
+  --danger: #8b2020;
+  --danger-text: #cc6666;
+  --danger-bg: #1a0808;
+  --success: #2d5a2d;
+  --success-text: #88bb88;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #eaeaea;
+  --bg-tertiary: #dfdfdf;
+  --bg-card: #ffffff;
+  --bg-input: #fafafa;
+
+  --border-primary: #cccccc;
+  --border-secondary: #e2e2e2;
+  --border-hover: #b8b8b8;
+  --border-focus: #888888;
+
+  --text-primary: #151515;
+  --text-secondary: #4a4a4a;
+  --text-muted: #888888;
+  --text-dim: #a0a0a0;
+  --text-bright: #000000;
+
+  --accent: #000000;
+  --danger: #b32626;
+  --danger-text: #d32f2f;
+  --danger-bg: #ffebee;
+  --success: #357a38;
+  --success-text: #2e7d32;
+}
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border: 1px solid var(--bg-primary);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Pixel inputs */
+input, textarea, select, button {
+  font-family: var(--font-sans);
+  border-radius: 0px;
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-family: var(--font-sans);
+  color: var(--text-dim);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--border-focus) !important;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes coffin-open {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-dim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes float-dust {
+  0% { transform: translateY(0) translateX(0); opacity: 0.3; }
+  50% { opacity: 0.6; }
+  100% { transform: translateY(-20px) translateX(5px); opacity: 0; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+.animate-coffin-open {
+  animation: coffin-open 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-pulse-dim {
+  animation: pulse-dim 2s ease-in-out infinite;
+}
+
+/* Pixel button hover */
+.pixel-btn {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.1s;
+  image-rendering: pixelated;
+}
+
+.pixel-btn:hover {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.pixel-btn:active {
+  transform: translateY(1px);
+}
+
+.pixel-btn-primary {
+  background: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.pixel-btn-primary:hover {
+  background: #fff;
+  border-color: #fff;
+}
+
+.pixel-btn-primary:active {
+  transform: translateY(1px);
+}
+
+.pixel-btn-danger {
+  background: var(--danger-bg);
+  border: 2px solid var(--danger);
+  color: var(--danger-text);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.pixel-btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* Pixel input */
+.pixel-input {
+  background: var(--bg-input);
+  border: 2px solid var(--border-primary);
+  color: var(--text-primary);
+  padding: 8px 10px;
+  font-size: 7px;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+.pixel-input:focus {
+  border-color: var(--border-focus);
+}
+
+/* Card */
+.pixel-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-primary);
+}
+
+/* Selection highlight */
+::selection {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+/* Scrollbar Hiding Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

@@ -1,0 +1,97 @@
+# GraveIt — Production Docker Compose
+# Services: Caddy + Node App + PostgreSQL 16 + Redis 7
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: graveit_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /etc/caddy/certs:/etc/caddy/certs:ro          # Cloudflare Origin Cert on VPS
+      - uploads:/var/www/graveit/uploads:ro             # Serve uploads directly
+      - caddy_data:/data
+      - caddy_config:/config
+      - /var/log/caddy:/var/log/caddy
+    networks:
+      - graveit
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: graveit_app
+    restart: unless-stopped
+    # Port NOT exposed externally — only Caddy can reach it via internal network
+    expose:
+      - "3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://graveit:${POSTGRES_PASSWORD}@postgres:5432/graveit?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - graveit
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: graveit_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: graveit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: graveit
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U graveit -d graveit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - graveit
+
+  redis:
+    image: redis:7-alpine
+    container_name: graveit_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - graveit
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+  uploads:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+networks:
+  graveit:
+    driver: bridge

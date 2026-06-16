@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GraveIt — Plot Pricing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #d4d4d4;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .container {
+      background-color: #111111;
+      border: 2px solid #2a2a2a;
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+      box-sizing: border-box;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+    h1 {
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #eee;
+      border-bottom: 2px solid #1e1e1e;
+      padding-bottom: 20px;
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 12px;
+      font-weight: bold;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    p {
+      font-size: 13px;
+      color: #999;
+      line-height: 1.6;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    th, td {
+      border: 2px solid #2a2a2a;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #1a1a1a;
+      color: #eee;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    td {
+      background-color: #0d0d0d;
+    }
+    .price {
+      font-weight: bold;
+      color: #eee;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #1a1a1a;
+      border: 2px solid #2a2a2a;
+      color: #d4d4d4;
+      padding: 10px 20px;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: 'JetBrains Mono', monospace;
+      text-decoration: none;
+      text-transform: uppercase;
+      margin-top: 24px;
+      transition: all 0.1s;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #d4d4d4;
+      color: #0a0a0a;
+      border-color: #d4d4d4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PLOT STAKING PRICING</h1>
+    
+    <h2>1. Plot Staking Tariffs</h2>
+    <p>
+      Staking a plot in the digital cemetery is a one-time donation to secure coordinate ground. All standard features (including pixel shades, custom inscription, and style categories) are fully included.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Plot Dimension</th>
+          <th>Size Category</th>
+          <th>One-Time Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1 × 1 grid tile</td>
+          <td>SMALL</td>
+          <td class="price">$4.99</td>
+        </tr>
+        <tr>
+          <td>2 × 2 grid tiles</td>
+          <td>MEDIUM</td>
+          <td class="price">$9.99</td>
+        </tr>
+        <tr>
+          <td>3 × 3 grid tiles</td>
+          <td>LARGE</td>
+          <td class="price">$14.99</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2. Plot Constraints & Limits</h2>
+    <p>
+      To prevent ledger bloat and ensure beautiful rendering, the following limits are strictly enforced:
+    </p>
+    <div style="border: 2px solid #2a2a2a; background-color: #0d0d0d; padding: 16px; margin: 20px 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.8; color: #999;">
+      <div>• <strong>Epitaph Title:</strong> Max 50 characters.</div>
+      <div>• <strong>Inscription Text:</strong> Max 1000 characters.</div>
+      <div>• <strong>Image Uploads:</strong> Max 5MB file size (JPG, PNG, GIF, WEBP).</div>
+    </div>
+
+    <h2>3. Hosting & Maintenance</h2>
+    <p>
+      There are no hidden recurring hosting fees or subscription plans. Once a grave is sealed, it remains staked eternally as long as the digital cemetery exists.
+    </p>
+
+    <a href="/" class="btn">Return to Cemetery</a>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #2a2a2a; font-size: 11px; color: #666; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.6;">
+      GraveIt &copy; 2026 &bull; Contact: soran.work.dev@gmail.com
+    </div>
+  </div>
+</body>
+</html>
