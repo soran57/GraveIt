@@ -185,11 +185,34 @@ export default function App() {
       .catch(() => {});
   };
 
-  const handleSidePanelSubmit = (formData: { title: string; text: string; imageUrl: string; color?: string }) => {
+  const handleSidePanelSubmit = async (formData: { title: string; text: string; imageUrl: string; color?: string; caretakerName?: string }) => {
     localStorage.setItem("temp_grave_title", formData.title);
     localStorage.setItem("temp_grave_text", formData.text);
     localStorage.setItem("temp_grave_img", formData.imageUrl);
     localStorage.setItem("temp_grave_color", formData.color || "#4b4b4b");
+
+    let currentUser = user;
+    if (!currentUser) {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/auth/anonymous", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ display_name: formData.caretakerName }),
+        });
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || "Failed to establish caretaker session.");
+        }
+        const anonUser = await response.json();
+        setUser(anonUser);
+        currentUser = anonUser;
+      } catch (err: any) {
+        setIsLoading(false);
+        setAlertBanner(err.message || "Authentication failed.");
+        return;
+      }
+    }
 
     if (paddleConfig && paddleConfig.paddleClientToken && paddleConfig.paddlePrices[placementSize]) {
       setIsLoading(true);
@@ -229,7 +252,7 @@ export default function App() {
         }
 
         const customData: Record<string, string> = {
-          user_id: String(user?.id || ""),
+          user_id: String(currentUser?.id || ""),
           size_type: placementSize,
           epitaph_title: formData.title,
           color: formData.color || "#4b4b4b",
@@ -255,11 +278,13 @@ export default function App() {
         setAlertBanner("Failed to open checkout: " + err.message);
       }
     } else {
+      setIsLoading(false);
       setReadyToPlace(true);
       setShowStakeModal(false);
       showNotif("Details confirmed! Click a vacant cell on the map.");
     }
   };
+
 
   const handlePlaceConfirm = (gridX: number, gridY: number) => {
     if (!readyToPlace) {

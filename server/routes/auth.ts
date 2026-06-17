@@ -162,4 +162,48 @@ router.get("/google/callback", async (req: any, res: any) => {
   }
 });
 
+// 5) POST /api/auth/anonymous — Creates an anonymous user session with a caretaker name
+router.post("/anonymous", async (req: any, res: any) => {
+  const { display_name } = req.body;
+  const name = (display_name && display_name.trim()) ? display_name.trim() : "Ethereal Ghost";
+
+  if (name.length > 50) {
+    return res.status(400).json({ error: "Caretaker name cannot exceed 50 characters." });
+  }
+
+  // Generate cryptographically random IDs to satisfy NOT NULL constraints in DB
+  const anonId = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString("hex");
+  const googleId = `anon_${anonId}`;
+  const email = `${googleId}@graveit.rip`;
+  const avatarUrl = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${encodeURIComponent(name)}`;
+
+  try {
+    const dbUserRes = await pool.query(
+      `INSERT INTO users (google_id, email, display_name, avatar_url)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id`,
+      [googleId, email, name, avatarUrl]
+    );
+    const dbUser = dbUserRes.rows[0];
+
+    const sessionToken = jwt.sign({ sub: dbUser.id.toString() }, JWT_SECRET, { expiresIn: "24h" });
+    res.setHeader(
+      "Set-Cookie",
+      `graveit_session=${sessionToken}; Path=/; HttpOnly; ${IS_PROD ? "Secure; " : ""}SameSite=Lax; Max-Age=86400`
+    );
+
+    res.json({
+      id: dbUser.id,
+      google_id: googleId,
+      email: email,
+      display_name: name,
+      avatar_url: avatarUrl
+    });
+  } catch (error: any) {
+    console.error("Anonymous user creation failure:", error);
+    res.status(500).json({ error: "Failed to create anonymous keeper session." });
+  }
+});
+
 export default router;
+

@@ -70,7 +70,7 @@ interface StakeContractModalProps {
   selectedColor: string;
   setSelectedColor: (color: string) => void;
   isLoading: boolean;
-  onSubmit: (formData: { title: string; text: string; imageUrl: string; color?: string }) => void;
+  onSubmit: (formData: { title: string; text: string; imageUrl: string; color?: string; caretakerName?: string }) => void;
   onClose: () => void;
   onAuthPrompt: () => void;
 }
@@ -91,6 +91,7 @@ export default function StakeContractModal({
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [caretakerName, setCaretakerName] = useState("");
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState("");
@@ -135,9 +136,16 @@ export default function StakeContractModal({
     e.preventDefault();
     setFormError(null);
     if (!title.trim()) { setFormError("Epitaph name is required."); return; }
-    if (!user) { onAuthPrompt(); return; }
-    onSubmit({ title: title.trim(), text: text.trim(), imageUrl, color: selectedColor });
+    if (!user && !caretakerName.trim()) { setFormError("Caretaker name is required."); return; }
+    onSubmit({
+      title: title.trim(),
+      text: text.trim(),
+      imageUrl,
+      color: selectedColor,
+      caretakerName: !user ? caretakerName.trim() : undefined
+    });
   };
+
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -234,7 +242,23 @@ export default function StakeContractModal({
 
 
 
+            {/* Caretaker Name (Only if not logged in) */}
+            {!user && (
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs uppercase tracking-wider text-[var(--text-muted)] font-bold block">
+                    CARETAKER NAME (YOUR NAME) <span className="text-[var(--danger)]">*</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-[var(--text-dim)]">{caretakerName.length} / 50</span>
+                </div>
+                <input type="text" placeholder="e.g. John Doe (Your name on the ledger)" value={caretakerName} onChange={(e) => setCaretakerName(e.target.value)} maxLength={50}
+                  className="w-full bg-[var(--bg-input)] border-2 border-[var(--border-primary)] focus:border-[var(--border-focus)] text-[var(--text-primary)] placeholder-[var(--text-dim)] rounded-none py-2.5 px-3 text-sm font-sans outline-none transition-colors"
+                />
+              </div>
+            )}
+
             {/* 4. Epitaph Name */}
+
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="text-xs uppercase tracking-wider text-[var(--text-muted)] font-bold block">
