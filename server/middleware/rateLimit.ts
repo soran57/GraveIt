@@ -5,7 +5,7 @@ const IS_PROD = process.env.NODE_ENV === "production";
 // General API Rate Limiter
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: IS_PROD ? 200 : 100000, // Relax in dev mode
+  max: IS_PROD ? 300 : 100000, // Relax in dev mode
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many requests. Please slow down, Caretaker." },

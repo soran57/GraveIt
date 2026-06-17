@@ -310,6 +310,23 @@ export default function GraveCanvas({
         drawTombstone(ctx, pp.x, pp.y, wPx, hPx, g.style_index, zoom, g.color || "#4b4b4b", g.flowers || 0);
       });
 
+      // Draw Hover Highlight
+      if (activeTooltipGrave && !placementMode) {
+        const hg = activeTooltipGrave;
+        const pp = gridToPixel(hg.x_coord, hg.y_coord);
+        const wPx = hg.width * TILE_SIZE * zoom;
+        const hPx = hg.height * TILE_SIZE * zoom;
+
+        ctx.strokeStyle = theme === "light" ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.55)";
+        ctx.lineWidth = Math.max(1.5, 1.5 * zoom);
+        ctx.setLineDash([4 * zoom, 4 * zoom]);
+        ctx.strokeRect(pp.x, pp.y, wPx, hPx);
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = theme === "light" ? "rgba(0, 0, 0, 0.025)" : "rgba(255, 255, 255, 0.03)";
+        ctx.fillRect(pp.x, pp.y, wPx, hPx);
+      }
+
       // 4. Draw Placement Ghost
       if (placementMode) {
         const snap = gridToPixel(currentGridPos.x, currentGridPos.y);
@@ -386,7 +403,7 @@ export default function GraveCanvas({
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [graves, cameraX, cameraY, zoom, dimensions, placementMode, selectedStyleIdx, placementSize, currentGridPos, isHoverOccupied, showGrid, selectedColor, theme]);
+  }, [graves, cameraX, cameraY, zoom, dimensions, placementMode, selectedStyleIdx, placementSize, currentGridPos, isHoverOccupied, showGrid, selectedColor, theme, activeTooltipGrave]);
 
 
   return (
@@ -431,7 +448,7 @@ export default function GraveCanvas({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => { setIsDragging(false); setActiveTooltipGrave(null); setTooltipPos(null); }}
-        className="w-full h-full block touch-none cursor-crosshair"
+        className={`w-full h-full block touch-none ${activeTooltipGrave && !placementMode ? "cursor-pointer" : "cursor-crosshair"}`}
       />
 
       {/* Informational Hover Tooltip */}

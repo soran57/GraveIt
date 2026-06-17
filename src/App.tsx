@@ -56,6 +56,7 @@ export default function App() {
   const [paddleConfig, setPaddleConfig] = useState<any>(null);
   const paddleInitializedRef = useRef(false);
   const checkoutCompletedRef = useRef<((transactionId: string) => void) | null>(null);
+  const lastFetchedRef = useRef<{ x: number; y: number; zoom: number } | null>(null);
 
   const [activeTransactionId, setActiveTransactionId] = useState<string | null>(null);
 
@@ -126,9 +127,30 @@ export default function App() {
 
   // Viewport grave fetching (debounced to prevent high-frequency request spam on pan/zoom)
   useEffect(() => {
+    const vhw = Math.ceil(40 / zoom);
+    const vhh = Math.ceil(30 / zoom);
+
+    let shouldFetch = false;
+    if (!lastFetchedRef.current) {
+      shouldFetch = true;
+    } else {
+      const last = lastFetchedRef.current;
+      const dx = Math.abs(cameraX - last.x);
+      const dy = Math.abs(cameraY - last.y);
+      const dz = Math.abs(zoom - last.zoom);
+
+      // Fetch if zoom changed, or if we panned by at least 15% of the viewport size
+      const thresholdX = vhw * 0.15;
+      const thresholdY = vhh * 0.15;
+
+      if (dz > 0.05 || dx > thresholdX || dy > thresholdY) {
+        shouldFetch = true;
+      }
+    }
+
+    if (!shouldFetch) return;
+
     const handler = setTimeout(() => {
-      const vhw = Math.ceil(40 / zoom);
-      const vhh = Math.ceil(30 / zoom);
       const minX = Math.floor(cameraX - vhw);
       const maxX = Math.ceil(cameraX + vhw);
       const minY = Math.floor(cameraY - vhh);
@@ -137,7 +159,10 @@ export default function App() {
       fetch(`/api/graves?min_x=${minX}&max_x=${maxX}&min_y=${minY}&max_y=${maxY}`)
         .then((res) => res.json())
         .then((data) => {
-          if (Array.isArray(data)) setGraves(data);
+          if (Array.isArray(data)) {
+            setGraves(data);
+            lastFetchedRef.current = { x: cameraX, y: cameraY, zoom };
+          }
         })
         .catch(() => {});
     }, 150);
@@ -373,6 +398,7 @@ export default function App() {
         }
 
         ["temp_grave_title","temp_grave_text","temp_grave_img","temp_grave_color"].forEach(k => localStorage.removeItem(k));
+        lastFetchedRef.current = null;
         setCameraX((x) => x + 0.0001);
       })
       .catch(() => { setIsLoading(false); setAlertBanner("Network error during placement."); });
@@ -548,6 +574,7 @@ export default function App() {
           onGraveClick={handleGraveClick}
           onGraveDeleted={() => {
             // Nudge camera state to re-trigger viewport fetch after a plot is deleted
+            lastFetchedRef.current = null;
             setCameraX((x) => x + 0.0001);
           }}
         />

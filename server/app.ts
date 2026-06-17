@@ -63,8 +63,13 @@ app.use(
   })
 );
 
-// Mount API limiter globally on /api/ routes
-app.use("/api/", apiLimiter);
+// Mount API limiter globally on /api/ routes (excluding high-frequency public map coordinate GET requests)
+app.use("/api/", (req, res, next) => {
+  if (req.method === "GET" && req.originalUrl.split("?")[0] === "/api/graves") {
+    return next();
+  }
+  apiLimiter(req, res, next);
+});
 
 // Custom express.json to capture raw body for Paddle signature verification
 app.use(
