@@ -62,6 +62,22 @@ export async function initDB() {
     await pool.query(schemaSql);
     console.log("Database schema initialized/verified successfully.");
 
+    // Clean up stale anonymous accounts that never completed grave placement (created > 24 hours ago)
+    try {
+      const cleanupRes = await pool.query(
+        `DELETE FROM users 
+         WHERE google_id LIKE 'anon_%' 
+           AND created_at < NOW() - INTERVAL '24 hours'
+           AND id NOT IN (SELECT DISTINCT user_id FROM graves WHERE user_id IS NOT NULL)`
+      );
+      if (cleanupRes.rowCount && cleanupRes.rowCount > 0) {
+        console.log(`[DB Cleanup] Purged ${cleanupRes.rowCount} stale anonymous keeper accounts.`);
+      }
+    } catch (cleanupErr) {
+      console.error("Failed to run stale anonymous users cleanup:", cleanupErr);
+    }
+
+
   } catch (err: any) {
     console.error("Failed to initialize database schema:", err);
     process.exit(1);

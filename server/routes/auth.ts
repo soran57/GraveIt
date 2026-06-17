@@ -4,10 +4,12 @@ import crypto from "crypto";
 import { pool } from "../db/index";
 import { redis, getCachedSession, setCachedSession, clearCachedSession } from "../db/redis";
 import { parseCookies } from "../middleware/auth";
+import { writeLimiter } from "../middleware/rateLimit";
 
 const router = Router();
 const IS_PROD = process.env.NODE_ENV === "production";
 const JWT_SECRET = process.env.JWT_SECRET!;
+
 
 // 1) GET /api/auth/me — Retrieve authenticated user with Redis caching support
 router.get("/me", async (req: any, res: any) => {
@@ -163,7 +165,7 @@ router.get("/google/callback", async (req: any, res: any) => {
 });
 
 // 5) POST /api/auth/anonymous — Creates an anonymous user session with a caretaker name
-router.post("/anonymous", async (req: any, res: any) => {
+router.post("/anonymous", writeLimiter, async (req: any, res: any) => {
   const { display_name } = req.body;
   const name = (display_name && display_name.trim()) ? display_name.trim() : "Ethereal Ghost";
 

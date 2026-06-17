@@ -436,8 +436,15 @@ router.post("/:id/flower", writeLimiter, authenticateJWT, async (req: any, res: 
   }
   const user = req.user;
 
+  // Prevent anonymous accounts from laying flowers to avoid bot abuse.
+  // Returning 401 forces the frontend to open the Google Sign-In modal.
+  if (user.google_id && user.google_id.startsWith("anon_")) {
+    return res.status(401).json({ error: "Only Google-verified keepers can lay flowers." });
+  }
+
   try {
     const graveCheck = await pool.query("SELECT id FROM graves WHERE id = $1", [graveId]);
+
     if (graveCheck.rows.length === 0) {
       return res.status(404).json({ error: "Grave not found" });
     }
