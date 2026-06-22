@@ -1,6 +1,10 @@
 # GraveIt ⚰
 
+[![Website](https://img.shields.io/badge/Live_Site-graveit.rip-purple?style=for-the-badge)](https://graveit.rip)
+
 **A pixel-art digital cemetery. Stake your eternal internet grave.**
+
+🌐 **Live Website:** [graveit.rip](https://graveit.rip)
 
 GraveIt is an open-world, multiplayer canvas where anyone can claim a plot on an infinite grid, carve an epitaph, upload an image, and leave their mark on the internet — forever.
 
